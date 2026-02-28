@@ -123,7 +123,7 @@
     <script>
         const SUPABASE_URL = 'https://irtkpsukztkhacafzuoh.supabase.com';
         const SUPABASE_ANON_KEY = 'sb_publishable_68PM__9-_Kaiu3hfxgAxdQ_3noCnxzu';
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // Elements
         const authContainer = document.getElementById('authContainer');
@@ -145,7 +145,7 @@
         async function handleLogin() {
             const email = document.getElementById('authEmail').value;
             const password = document.getElementById('authPassword').value;
-            const { error } = await supabase.auth.signInWithPassword({ email, password });
+            const { error } = await _supabase.auth.signInWithPassword({ email, password });
             if (error) return showError(error.message);
             location.reload();
         }
@@ -163,7 +163,7 @@
         }
 
         async function handleLogout() {
-            await supabase.auth.signOut();
+            await _supabase.auth.signOut();
             location.reload();
         }
 
@@ -182,7 +182,7 @@
             loadMyOrders(user.id);
 
             // Real-time Orders Listener
-            supabase.channel('orders-channel')
+            _supabase.channel('orders-channel')
                 .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders', filter: `seller_id=eq.${user.id}` }, payload => {
                     console.log('New Order!', payload.new);
                     loadMyOrders(user.id); // Refresh list
@@ -220,7 +220,7 @@
 
         // Load Orders
         async function loadMyOrders(seller_id) {
-            const { data } = await supabase
+            const { data } = await _supabase
                 .from('orders')
                 .select('*, listings(title)')
                 .eq('seller_id', seller_id)
@@ -254,7 +254,7 @@
         // Add Listing Form
         document.getElementById('listingForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const user = (await supabase.auth.getUser()).data.user;
+            const user = (await _supabase.auth.getUser()).data.user;
             const form = e.target;
             const title = form.title.value;
             const price = form.price.value;
@@ -284,7 +284,7 @@
             }
 
             // 2. Insert Listing
-            const { error } = await supabase.from('listings').insert([{
+            const { error } = await _supabase.from('listings').insert([{
                 title, price, description, image_url: imageUrl, is_available, seller_id: user.id
             }]);
 
