@@ -111,7 +111,7 @@
         // Initialize Supabase
         const SUPABASE_URL = 'https://irtkpsukztkhacafzuoh.supabase.com';
         const SUPABASE_ANON_KEY = 'sb_publishable_68PM__9-_Kaiu3hfxgAxdQ_3noCnxzu';
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // State
         let allListings = [];
@@ -125,7 +125,7 @@
 
         // Fetch Listings on Load
         async function loadFood() {
-            const { data, error } = await supabase
+            const { data, error } = await _supabase
                 .from('listings')
                 .select('*, profiles(full_name)')
                 .eq('is_available', true)
@@ -219,7 +219,7 @@
             submitBtn.disabled = true;
             submitBtn.innerText = "Processing...";
 
-            const { error } = await supabase.from('orders').insert([{
+            const { error } = await _supabase.from('orders').insert([{
                 listing_id: data.listing_id,
                 seller_id: data.seller_id,
                 total_price: data.price, // Assuming quantity 1 for simplicity
